@@ -1,4 +1,5 @@
 const wallets = [];
+// PROBLEM 3
 
 function findWallet(walletId) {
   for (const row of wallets) {
@@ -23,11 +24,13 @@ class Ledger {
     const row = findWallet(walletId);
     if (!row) {
       return 0;
+      // PROBLEM 3
     }
     return row.allowance;
   }
 
   addWallet(caller, walletId, allowance = 100, label = "") {
+    // PROBLEM 1
     wallets.push({
       id: walletId,
       allowance,
@@ -38,11 +41,13 @@ class Ledger {
   }
 
   deposit(amount) {
+    // PROBLEM 2
     this.balance = this.balance + amount;
     return this.balance;
   }
 
   withdraw(walletId, amount) {
+    // PROBLEM 2
     const row = findWallet(walletId);
     this.balance = this.balance - amount;
     return { ok: true, balance: this.balance, wallet: row.id };
