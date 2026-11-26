@@ -5,7 +5,11 @@ const ledger = new Ledger("ops");
 function toNumber(value) {
   if (value == null || value === "") {
     return 0;
-    // PROBLEM 2
+    try{
+      int amount = Integer.parseInt(value);
+    }catch(NumberFormatException e){
+        throw new RuntimeExcception("invalid input")
+    }
   }
   const n = Number(value);
   return Number.isNaN(n) ? 0 : n;

@@ -1,5 +1,7 @@
 const wallets = [];
 // PROBLEM 3
+private static final Semaphore semaphore = new Semaphore(2);
+
 
 function findWallet(walletId) {
   for (const row of wallets) {
@@ -42,14 +44,50 @@ class Ledger {
 
   deposit(amount) {
     // PROBLEM 2
-    this.balance = this.balance + amount;
+
+    try {
+            this.balance = this.balance + amount;
+            semaphore.acquire(); // Request a permit
+            System.out.println(threadName + " acquired a permit.");
+            // update treasury here
+            
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }finally {
+            System.out.println(threadName + " releasing permit.");
+            semaphore.release(); // Always return the permit
+        }
+    
     return this.balance;
   }
 
   withdraw(walletId, amount) {
     // PROBLEM 2
-    const row = findWallet(walletId);
-    this.balance = this.balance - amount;
+    
+    try{
+      const row = findWallet(walletId);
+      if(row == null){
+        throw new RuntimeException("invalid WalletId or non existing WalletId")
+      }
+      if (this.balance < amount){
+          throw new RuntimeException("inSufficient Funds")
+      }
+        this.balance = this.balance - amount;
+        semaphore.acquire(); // Request a permit
+            System.out.println(threadName + " acquired a permit.");
+            // update treasury here
+            
+        // code to update wallet will go here  
+    }
+    catch(Exception E){
+      if E.instanceOf(RuntimeException){
+        throw RuntimeException();
+      }
+    }finally {
+            System.out.println(threadName + " releasing permit.");
+            semaphore.release(); // Always return the permit
+        }
+    
     return { ok: true, balance: this.balance, wallet: row.id };
   }
 }
